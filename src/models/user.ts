@@ -5,10 +5,10 @@ import {
   DataType,
   HasMany,
 } from "sequelize-typescript";
-import { Animal } from "./animals";
+import Animal from "./animals";
 
 @Table
-export class User extends Model {
+export default class User extends Model {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
@@ -18,10 +18,10 @@ export class User extends Model {
   
   @Column({
     type: DataType.STRING,
-    unique: true,
+    unique: false,
     allowNull: false,
   })
-  username!: string;
+  name!: string;
 
   @Column({
     type: DataType.STRING,
@@ -31,10 +31,23 @@ export class User extends Model {
   email!: string;
 
   @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  phone?: number;
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   password!: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  isBan!: boolean;
 
   @HasMany(() => Animal)
   animals!: Animal[];

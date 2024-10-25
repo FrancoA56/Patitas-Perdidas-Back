@@ -5,39 +5,14 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
-  HasMany,
+  HasMany
 } from "sequelize-typescript";
-import { User } from "./user";
-import { Image } from "./animalsImage";
-
-// Enums.ts
-export enum AnimalColors {
-  BLACK = "black",
-  WHITE = "white",
-  BROWN = "brown",
-  GRAY = "gray",
-  BEIGE = "beige",
-  ORANGE = "orange",
-  GREEN = "green",
-  RED = "red",
-  BLUE = "blue",
-  OTHER = "other",
-}
-
-export enum AnimalType {
-  DOG = "dog",
-  CAT = "cat",
-  OTHER = "other",
-}
-
-export enum AnimalStatus {
-  FOUND = "found",
-  MISSING = "missing",
-  ADOPTION = "adoption",
-}
+import User from "./user";
+import AnimalImage from "./animalImage"; // Tabla para almacenar las imágenes del animal
+import { AnimalColors, AnimalType, AnimalStatus } from "../utils/enums";
 
 @Table
-export class Animal extends Model {
+export default class Animal extends Model<Animal> {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -55,16 +30,10 @@ export class Animal extends Model {
   name!: string;
 
   @Column({
-    type: DataType.ENUM("Months", "Years"),
+    type: DataType.DATEONLY, // Almacena la fecha de nacimiento para calcular la edad.
     allowNull: false,
   })
-  ageSize!: "Months" | "Years";
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  age!: number;
+  birthdate!: string;
 
   @Column({
     type: DataType.STRING,
@@ -84,15 +53,14 @@ export class Animal extends Model {
   user!: User;
 
   @Column({
-    type: DataType.ENUM(...Object.values(AnimalColors)),
-    defaultValue: AnimalColors.OTHER,
+    type: DataType.ARRAY(DataType.ENUM(...Object.values(AnimalColors))), // Permite múltiples colores usando ARRAY.
     allowNull: false,
+    defaultValue: [AnimalColors.OTHER],
   })
-  colors!: AnimalColors;
+  colors!: AnimalColors[];
 
   @Column({
     type: DataType.ENUM(...Object.values(AnimalType)),
-    defaultValue: AnimalType.CAT,
     allowNull: false,
   })
   type!: AnimalType;
@@ -106,15 +74,15 @@ export class Animal extends Model {
 
   @Column({
     type: DataType.DATEONLY,
-    allowNull: false,
+    allowNull: true,
   })
-  dayMissing!: string;
+  dayMissing?: string;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  placeMissing!: string;
+  placeMissing?: string;
 
   @Column({
     type: DataType.STRING,
@@ -129,6 +97,6 @@ export class Animal extends Model {
   })
   reunited!: boolean;
 
-  @HasMany(() => Image)
-  images!: Image[];
+  @HasMany(() => AnimalImage) // Relación de uno a muchos con la tabla de imágenes.
+  images!: AnimalImage[];
 }

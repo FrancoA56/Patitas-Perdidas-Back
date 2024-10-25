@@ -1,51 +1,28 @@
 import { Sequelize } from "sequelize-typescript";
-import config from "./utils/config";
+import config from "./utils/config"; 
+import path from 'path';
 
-let sequelize: Sequelize;
-if (config.dev) {
-  sequelize = new Sequelize({
-    dialect: "postgres",
-    database: config.dbName,
-    password: config.dbPassword,
-    username: config.dbUser,
-    storage: ":memory:",
-    models: [__dirname + "/models"],
-    logging: false,
-  });
-} else {
-  sequelize = new Sequelize(config.dbDeploy, {
-    logging: false,
-    native: false,
-    dialectOptions: {
-      ssl: {
-        require: true,
-      },
-    },
-    models: [__dirname + "/models"],
-  });
-}
+// Crear una instancia de Sequelize para la base de datos
+const sequelize = new Sequelize({
+  dialect: "postgres", 
+  host: "localhost", 
+  port: 5432, 
+  database: config.dbName, 
+  username: config.dbUser, 
+  password: config.dbPassword, 
+  logging: false, 
+  models: [path.join(__dirname, "/models")], // Ruta donde están los modelos Sequelize
+});
 
 const {
   User,
-  Admin,
-  Preset,
-  Invoice,
-  InvoiceItem,
-  Review,
-  Order,
-  OrderItem,
-  PresetImage,
+  Animal,
+  AnimalImage	
 } = sequelize.models;
 
 export {
   sequelize,
   User,
-  Admin,
-  Preset,
-  Invoice,
-  InvoiceItem,
-  Order,
-  OrderItem,
-  Review,
-  PresetImage,
+  Animal,
+  AnimalImage
 };
